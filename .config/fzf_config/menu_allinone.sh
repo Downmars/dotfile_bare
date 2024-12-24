@@ -1,61 +1,61 @@
 #!/usr/bin/env bash
-# menu_allinone.sh - 综合功能菜单
+# menu_allinone.sh - Comprehensive Function Menu
 
-# 加载配置文件（如果有）
-CONFIG="${XDG_CONFIG_HOME:-~/.config}/fzf_config/fzfmenurc"
+# Load configuration file (if available)
+CONFIG="${XDG_CONFIG_HOME:-~/.config}/fzf_config/.fzfmenurc"
 if [ -f "$CONFIG" ]; then
   source "$CONFIG"
 fi
 
-# 定义菜单选项
+# Define menu options
 options=(
-  "打开文件"
-  "管理 Git"
-  "管理任务"
-  "管理进程"
-  "切换目录"
-  "打开网站"
-  "启动应用"
-  "退出"
+  "Open File"
+  "Manage Git"
+  "Manage Tasks"
+  "Manage Processes"
+  "Change Directory"
+  "Open Website"
+  "Launch Application"
+  "Exit"
 )
 
-# 使用 fzf 显示菜单
-choice=$(printf "%s\n" "${options[@]}" | fzf $FZF_OPTS --height=40% --reverse --prompt="选择操作: ")
+# Display menu using fzf
+choice=$(printf "%s\n" "${options[@]}" | fzf $FZF_OPTS --height=40% --reverse --prompt="Select an action: ")
 
-# 根据选择执行相应操作
+# Execute corresponding action based on selection
 case "$choice" in
-"打开文件")
-  ~/.config/fzf_config/fopen_fd_bat.sh
-  notify-send "操作完成" "文件已打开"
+"Open File")
+  ~/.config/fzf_config/fopen.sh
+  notify-send "Operation Complete" "File opened"
   ;;
-"管理 Git")
-  ~/.config/fzf_config/fgit_branch.sh
-  notify-send "操作完成" "Git 分支已管理"
+"Manage Git")
+  ~/.config/fzf_config/fgit.sh
+  notify-send "Operation Complete" "Git branches managed"
   ;;
-"管理任务")
+"Manage Tasks")
   ~/.config/fzf_config/ftask.sh
-  notify-send "操作完成" "任务已管理"
+  notify-send "Operation Complete" "Tasks managed"
   ;;
-"管理进程")
-  ~/.config/fzf_config/fkill_htop.sh
-  notify-send "操作完成" "进程已管理"
+"Manage Processes")
+  ~/.config/fzf_config/fkill.sh
+  notify-send "Operation Complete" "Processes managed"
   ;;
-"切换目录")
+"Change Directory")
   ~/.config/fzf_config/fbookmark.sh
-  notify-send "操作完成" "目录已切换"
+  notify-send "Operation Complete" "Directory changed"
   ;;
-"打开网站")
+"Open Website")
   ~/.config/fzf_config/fweb.sh
-  notify-send "操作完成" "网站已打开"
+  notify-send "Operation Complete" "Website opened"
   ;;
-"启动应用")
+"Launch Application")
   ~/.config/fzf_config/fapp.sh
-  notify-send "操作完成" "应用已启动"
+  notify-send "Operation Complete" "Application launched"
   ;;
-"退出")
+"Exit")
   exit 0
   ;;
 *)
-  echo "未识别的选项"
+  echo "Unrecognized option"
   ;;
 esac
