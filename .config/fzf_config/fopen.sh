@@ -11,7 +11,7 @@ if [ ! -f "$CONFIG_FILE" ]; then
 fi
 
 # 检查所需工具是否已安装
-required_tools=(fd fzf bat file)
+required_tools=(fd fzf bat file xsel chafa)
 for tool in "${required_tools[@]}"; do
   if ! command -v "$tool" &>/dev/null; then
     echo "Error: $tool is not installed. Please install it and try again."
@@ -36,8 +36,16 @@ done <"$CONFIG_FILE"
 # 默认打开命令
 DEFAULT_OPEN_COMMAND="xdg-open"
 
+# 构建 fzf 的预览命令
+PREVIEW_CMD='mime=$(file --mime-type -b {}); \
+if [[ $mime =~ ^image/ ]]; then \
+  chafa --clear -s 80 {}; \
+else \
+  bat --style=numbers --color=always {}; \
+fi'
+
 # 使用 fd 查找文件，并通过 fzf 选择
-selected=$(fd --type f --hidden --follow | fzf --preview "bat --style=numbers --color=always {}" --height=40%)
+selected=$(fd --type f --hidden --follow | fzf --preview "$PREVIEW_CMD" --height=90% --layout=default --info=inline)
 
 # 如果有选择，则根据 MIME 类型打开
 if [ -n "$selected" ]; then
@@ -64,13 +72,13 @@ if [ -n "$selected" ]; then
 
   # 检查命令是否是自定义函数
   if declare -F "$open_cmd" >/dev/null; then
-    # 调用自定义函数
-    "$open_cmd" "$selected"
+    # 调用自定义函数，并将其放入后台运行
+    "$open_cmd" "$selected" &
+    disown
   else
     # 检查命令是否存在
     if command -v "$open_cmd" &>/dev/null; then
-      # 使用对应的命令打开文件
-      # "$open_cmd" "$selected"
+      # 使用对应的命令打开文件，并隐藏终端
       nohup "$open_cmd" "$selected" >/dev/null 2>&1 &
       disown
     else
@@ -78,5 +86,4 @@ if [ -n "$selected" ]; then
       exit 1
     fi
   fi
-
 fi

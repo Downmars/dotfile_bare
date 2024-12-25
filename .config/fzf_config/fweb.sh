@@ -39,10 +39,12 @@ case "$CHOICE" in
   read -p "Enter URL (including http:// or https://): " URL
   # Simple URL format validation
   if [[ "$URL" =~ ^https?:// ]]; then
-    xdg-open "$URL"
+    nohup xdg-open "$URL" >/dev/null 2>&1 &
+    disown
   else
     # If no protocol prefix, default to adding http://
-    xdg-open "http://$URL"
+    nohup xdg-open "http://$URL" >/dev/null 2>&1 &
+    disown
   fi
   ;;
 "Search...")
@@ -51,12 +53,14 @@ case "$CHOICE" in
   # Perform search using default search engine
   # URL-encode the search query
   ENCODED_QUERY=$(python3 -c "import urllib.parse, sys; print(urllib.parse.quote(sys.argv[1]))" "$QUERY")
-  xdg-open "${SEARCH_ENGINE}${ENCODED_QUERY}"
+  nohup xdg-open "${SEARCH_ENGINE}${ENCODED_QUERY}" >/dev/null 2>&1 &
+  disown
   ;;
 *)
   # Handle predefined website selection
   # Split name and URL using tab
   URL=$(echo -e "$CHOICE" | awk -F'\t' '{print $2}')
-  xdg-open "$URL"
+  nohup xdg-open "$URL" >/dev/null 2>&1 &
+  disown
   ;;
 esac
